@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECI Overseas E-Ballot Portal | Consular Electoral Services</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+  <div class="tiranga-bar"></div>
+
+  <div class="top-nav">
+    <div id="lblGovHeader">भारत निर्वाचन आयोग | Election Commission of India (Overseas Division)</div>
+    <div>
+      <select id="langSelect" onchange="changeLanguage(this.value)" style="background:#0f172a; color:#fff; border:1px solid #334155; padding:2px 6px; font-size:0.75rem;">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="kn">ಕನ್ನಡ</option>
+      </select>
+      <a href="/admin" target="_blank" style="color: #fdba74; margin-left: 10px;">Returning Officer Portal</a>
+    </div>
+  </div>
+
+  <header class="main-header">
+    <div class="brand-wrapper">
+      <div class="emblem-badge">🏛️</div>
+      <div class="brand-titles">
+        <h1 id="lblTitle">प्रवासी भारतीय इलेक्ट्रॉनिक मतदान पोर्टल</h1>
+        <p id="lblSubTitle">National Overseas Indian Digital Voting Portal (Form 6A E-Ballot)</p>
+      </div>
+    </div>
+    <div class="helpline-box">
+      <span>Consular Technical Desk</span>
+      <strong>📞 +91 11 23052205</strong>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="notice-ticker" id="lblNotice">
+      🔔 <strong>Statutory Notice:</strong> Overseas citizens can exercise their franchise subject to successful 4-Tier verification. Live tallies remain sealed inside the vault until official declaration.
+    </div>
+
+    <!-- Stepper Navigation -->
+    <div class="stepper-nav">
+      <div class="step-item active" id="badgeStep1"><span class="step-badge">1</span> Identity</div>
+      <div class="step-item" id="badgeStep2"><span class="step-badge">2</span> Geofence Check</div>
+      <div class="step-item" id="badgeStep3"><span class="step-badge">3</span> Mobile OTP</div>
+      <div class="step-item" id="badgeStep4"><span class="step-badge">4</span> Face Verification</div>
+      <div class="step-item" id="badgeStep5"><span class="step-badge">5</span> E-Ballot</div>
+    </div>
+
+    <!-- FORM 6A REGISTRATION -->
+    <div class="gov-card">
+      <div class="gov-card-header"><h2 id="lblForm6A">Form 6A: Register New Overseas Elector</h2></div>
+      <div class="gov-card-body">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+          <div class="form-field">
+            <label>Legal Name (as in Passport):</label>
+            <input type="text" id="regName" placeholder="e.g. Yashwanth Shankar">
+          </div>
+          <div class="form-field">
+            <label>Indian Passport Number:</label>
+            <input type="text" id="regPassport" placeholder="e.g. Z9482103">
+          </div>
+          <div class="form-field">
+            <label>12-Digit Identifier (Verhoeff Compliant):</label>
+            <input type="text" id="regAadhaar" placeholder="Enter valid 12-digit number" maxlength="12">
+          </div>
+          <div class="form-field">
+            <label>Registered Mobile Number:</label>
+            <input type="text" id="regMobile" placeholder="e.g. 9876543210" maxlength="10">
+          </div>
+          <div class="form-field">
+            <label>Home Constituency:</label>
+            <select id="regConstituency">
+              <option value="Bangalore South (Karnataka)">Bangalore South (Karnataka)</option>
+              <option value="Bangalore Central (Karnataka)">Bangalore Central (Karnataka)</option>
+              <option value="New Delhi (NCT)">New Delhi (NCT)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Host Nation of Residence:</label>
+            <select id="regCountry">
+              <option value="United States">United States</option>
+              <option value="United Arab Emirates">United Arab Emirates</option>
+              <option value="United Kingdom">United Kingdom</option>
+              <option value="Germany">Germany</option>
+              <option value="Singapore">Singapore</option>
+            </select>
+          </div>
+        </div>
+        <button class="gov-btn" onclick="registerOverseasVoter()">Enroll & Generate EPIC</button>
+        <div id="regAlert" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <!-- TIER 1: AUTHENTICATION -->
+    <div class="gov-card" id="tier1Section">
+      <div class="gov-card-header"><h2 id="lblTier1">Tier 1: NRI Identity & Electoral Roll Authentication</h2></div>
+      <div class="gov-card-body">
+        <div class="form-field">
+          <label>EPIC (Voter ID) Number:</label>
+          <input type="text" id="t1Epic" placeholder="e.g. IND123456">
+        </div>
+        <div class="form-field">
+          <label>Indian Passport Number:</label>
+          <input type="text" id="t1Passport" placeholder="e.g. Z9482103">
+        </div>
+        <div class="form-field">
+          <label>12-Digit Identifier:</label>
+          <input type="text" id="t1Aadhaar" placeholder="12-digit number" maxlength="12">
+        </div>
+        <button class="gov-btn" onclick="submitTier1()">Verify Against Electoral Roll</button>
+        <div id="t1Alert" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <!-- TIER 2: GEOLOCATION -->
+    <div class="gov-card" id="tier2Section" style="display: none;">
+      <div class="gov-card-header"><h2 id="lblTier2">Tier 2: Physical Geolocation & Border Verification</h2></div>
+      <div class="gov-card-body">
+        <div style="background: #f8fafc; border: 1px solid var(--gov-border); padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+          <p id="geoStatus" style="font-size: 0.85rem; color: #475569;">Grant location access to verify physical presence outside India.</p>
+        </div>
+        <button class="gov-btn" onclick="detectRealLocation()">Acquire Current Location & Verify</button>
+        <button class="gov-btn" style="background: #475569; margin-left: 8px;" onclick="detectRealLocation('United States')">[Dev Mode] Simulate Overseas IP (US)</button>
+        <div id="t2Alert" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <!-- TIER 3: MOBILE OTP -->
+    <div class="gov-card" id="tier3Section" style="display: none;">
+      <div class="gov-card-header"><h2 id="lblTier3">Tier 3: Multi-Factor Authentication (Mobile OTP)</h2></div>
+      <div class="gov-card-body">
+        <p id="otpPromptText" style="font-size: 0.9rem; margin-bottom: 12px;"></p>
+        <button class="gov-btn" onclick="requestOtp()">Dispatch Secure OTP</button>
+        <div id="otpDispArea" style="margin: 12px 0; font-size: 0.9rem; font-weight: 600; color: #0284c7;"></div>
+        <div class="form-field" style="margin-top: 10px;">
+          <label>Enter 6-Digit OTP:</label>
+          <input type="text" id="t3Otp" placeholder="6-digit passcode" maxlength="6">
+        </div>
+        <button class="gov-btn" onclick="submitTier3()">Validate Passcode</button>
+        <div id="t3Alert" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <!-- TIER 4: STRICT BIOMETRIC LIVENESS -->
+    <div class="gov-card" id="tier4Section" style="display: none;">
+      <div class="gov-card-header"><h2 id="lblTier4">Tier 4: Live Biometric Face & Liveness Inspection</h2></div>
+      <div class="gov-card-body" style="text-align: center;">
+        <p style="font-size: 0.88rem; color: #475569; margin-bottom: 12px;">
+          Position your full face clearly within the frame. Ensure good lighting and remove obstructions (masks, sunglasses, hands).
+        </p>
+        <div class="scanner-viewport">
+          <video id="webcam" autoplay playsinline muted></video>
+          <div class="face-guideline" id="faceGuide"></div>
+        </div>
+        <p id="biometricFeedback" style="font-size: 0.85rem; font-weight:600; color: #64748b; margin-bottom: 10px;">Camera inactive.</p>
+        <button class="gov-btn" onclick="startCamera()">Activate Camera</button>
+        <button class="gov-btn" style="background:#059669; margin-left: 8px;" onclick="analyzeFaceLiveness()">Verify Full Face & Liveness</button>
+        <div id="t4Alert" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <!-- TIER 5: ELECTRONIC BALLOT BOX -->
+    <div class="gov-card" id="tier5Section" style="display: none;">
+      <div class="gov-card-header"><h2 id="lblTier5">Tier 5: Official Electronic Ballot Box (E-EVM)</h2></div>
+      <div class="gov-card-body">
+        <p style="font-size: 0.9rem; margin-bottom: 15px; color:#15803d; font-weight:600;">
+          Identity decoupled. Blind ballot token authorized for submission:
+        </p>
+        <div id="ballotList" class="ballot-grid"></div>
+        <button class="gov-btn gov-btn-success" onclick="castFinalBallot()">Record Confidential Vote</button>
+        <div id="t5Alert" class="feedback-msg"></div>
+
+        <!-- Downloadable VVPAT Container -->
+        <div id="receiptContainer" style="display: none; margin-top: 20px;">
+          <div class="vvpat-receipt" id="vvpatSlip">
+            <div style="font-size: 1.5rem; margin-bottom: 5px;">🏛️</div>
+            <h3>Election Commission of India — Digital VVPAT Slip</h3>
+            <p style="font-size: 0.85rem; color: #475569;">Official Electoral Verification Acknowledgment</p>
+            <hr style="margin: 10px 0; border: none; border-top: 1px dashed #059669;">
+            <p><strong>Tracking Serial:</strong> <span class="code" id="receiptCode"></span></p>
+            <p style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">
+              Ballot deposited anonymously via Cryptographic Blind Token. Candidate choice omitted to preserve statutory ballot secrecy.
+            </p>
+          </div>
+          <button class="gov-btn" style="background: #0284c7; margin-top: 15px;" onclick="downloadVVPAT()">Download Official VVPAT (PDF)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Election Commission of India — Overseas Electoral Division. All ballots are encrypted in compliance with statutory confidentiality mandates.</p>
+  </footer>
+
+  <canvas id="hiddenCanvas" style="display:none;" width="320" height="240"></canvas>
+
+  <script>
+    let sessionToken = null;
+    let blindToken = null;
+    let cameraStream = null;
+
+    // Multilingual Translations
+    const TRANSLATIONS = {
+      en: {
+        title: "प्रवासी भारतीय इलेक्ट्रॉनिक मतदान पोर्टल",
+        subTitle: "National Overseas Indian Digital Voting Portal (Form 6A E-Ballot)",
+        form6A: "Form 6A: Register New Overseas Elector",
+        tier1: "Tier 1: NRI Identity & Electoral Roll Authentication",
+        tier2: "Tier 2: Physical Geolocation & Border Verification",
+        tier3: "Tier 3: Multi-Factor Authentication (Mobile OTP)",
+        tier4: "Tier 4: Live Biometric Face & Liveness Inspection",
+        tier5: "Tier 5: Official Electronic Ballot Box (E-EVM)"
+      },
+      hi: {
+        title: "प्रवासी भारतीय इलेक्ट्रॉनिक मतदान पोर्टल",
+        subTitle: "राष्ट्रीय प्रवासी भारतीय डिजिटल मतदान प्रणाली (प्रारूप 6क)",
+        form6A: "प्रारूप 6क: नए विदेशी मतदाता का पंजीकरण",
+        tier1: "चरण 1: पहचान एवं मतदाता सूची प्रमाणीकरण",
+        tier2: "चरण 2: भौगोलिक सीमा सत्यापन",
+        tier3: "चरण 3: मोबाइल ओटीपी प्रमाणीकरण",
+        tier4: "चरण 4: बायोमेट्रिक चेहरा एवं जीवंतता परीक्षण",
+        tier5: "चरण 5: आधिकारिक इलेक्ट्रॉनिक मतपेटी (ई-ईवीएम)"
+      },
+      kn: {
+        title: "ಅನಿವಾಸಿ ಭಾರತೀಯ ಎಲೆಕ್ಟ್ರಾನಿಕ್ ಮತದಾನ ಪೋರ್ಟಲ್",
+        subTitle: "ರಾಷ್ಟ್ರೀಯ ಅನಿವಾಸಿ ಭಾರತೀಯ ಡಿಜಿಟಲ್ ಮತದಾನ ವ್ಯವಸ್ಥೆ (ನಮೂನೆ 6ಎ)",
+        form6A: "ನಮೂನೆ 6ಎ: ಹೊಸ ಅನಿವಾಸಿ ಮತದಾರರ ನೋಂದಣಿ",
+        tier1: "ಹಂತ 1: ಅನಿವಾಸಿ ಗುರುತು ಮತ್ತು ಮತದಾರರ ಪಟ್ಟಿ ಪರಿಶೀಲನೆ",
+        tier2: "ಹಂತ 2: ಭೌಗೋಳಿಕ ಗಡಿ ಪರಿಶೀಲನೆ",
+        tier3: "ಹಂತ 3: ಮೊಬೈಲ್ ಒಟಿಪಿ ಪರಿಶೀಲನೆ",
+        tier4: "ಹಂತ 4: ಲೈವ್ ಬಯೋಮೆಟ್ರಿಕ್ ಮುಖ ಪರಿಶೀಲನೆ",
+        tier5: "ಹಂತ 5: ಅಧಿಕೃತ ಎಲೆಕ್ಟ್ರಾನಿಕ್ ಬ್ಯಾಲೆಟ್ ಬಾಕ್ಸ್ (ಇ-ಇವಿಎಂ)"
+      }
+    };
+
+    function changeLanguage(lang) {
+      const t = TRANSLATIONS[lang];
+      document.getElementById('lblTitle').textContent = t.title;
+      document.getElementById('lblSubTitle').textContent = t.subTitle;
+      document.getElementById('lblForm6A').textContent = t.form6A;
+      document.getElementById('lblTier1').textContent = t.tier1;
+      document.getElementById('lblTier2').textContent = t.tier2;
+      document.getElementById('lblTier3').textContent = t.tier3;
+      document.getElementById('lblTier4').textContent = t.tier4;
+      document.getElementById('lblTier5').textContent = t.tier5;
+    }
+
+    // Helper: Register Form 6A
+    async function registerOverseasVoter() {
+      const name = document.getElementById('regName').value;
+      const passport = document.getElementById('regPassport').value;
+      const aadhaar = document.getElementById('regAadhaar').value;
+      const mobile = document.getElementById('regMobile').value;
+      const constituency = document.getElementById('regConstituency').value;
+      const country = document.getElementById('regCountry').value;
+      const alertBox = document.getElementById('regAlert');
+
+      const res = await fetch('/api/register-overseas', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, passport, aadhaar, mobile, constituency, country })
+      });
+      const data = await res.json();
+      alertBox.textContent = data.message;
+      alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+      if (data.success) {
+        document.getElementById('t1Epic').value = data.epic_id;
+        document.getElementById('t1Passport').value = passport;
+        document.getElementById('t1Aadhaar').value = aadhaar;
+      }
+    }
+
+    // TIER 1
+    async function submitTier1() {
+      const epic_id = document.getElementById('t1Epic').value;
+      const passport = document.getElementById('t1Passport').value;
+      const aadhaar = document.getElementById('t1Aadhaar').value;
+      const alertBox = document.getElementById('t1Alert');
+
+      const res = await fetch('/api/verify/tier1', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ epic_id, passport, aadhaar })
+      });
+      const data = await res.json();
+      alertBox.textContent = data.message || `Welcome, ${data.elector_name}`;
+      alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+
+      if (data.success) {
+        sessionToken = data.session_token;
+        document.getElementById('otpPromptText').textContent = `Passcode will be transmitted to registered mobile: ${data.masked_mobile}`;
+        document.getElementById('badgeStep1').className = "step-item completed";
+        document.getElementById('badgeStep2').className = "step-item active";
+        document.getElementById('tier2Section').style.display = 'block';
+      }
+    }
+
+    // TIER 2: GEOLOCATION
+    function detectRealLocation(mockCountry = null) {
+      const geoStatus = document.getElementById('geoStatus');
+      const alertBox = document.getElementById('t2Alert');
+
+      if (mockCountry) {
+        fetch('/api/verify/tier2', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ session_token: sessionToken, detected_country: mockCountry })
+        })
+        .then(r => r.json())
+        .then(data => {
+          alertBox.textContent = data.message;
+          alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+          if (data.success) {
+            geoStatus.textContent = `Dev Simulation: Location confirmed under ${mockCountry}`;
+            document.getElementById('badgeStep2').className = "step-item completed";
+            document.getElementById('badgeStep3').className = "step-item active";
+            document.getElementById('tier3Section').style.display = 'block';
+          }
+        });
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        geoStatus.textContent = "Geolocation is not supported by your browser.";
+        return;
+      }
+
+      geoStatus.textContent = "Querying GPS satellite fix...";
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          try {
+            const revRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+            const geoData = await revRes.json();
+            const country = geoData.address ? geoData.address.country : "Unknown";
+
+            geoStatus.textContent = `Detected Country: ${country}`;
+
+            const res = await fetch('/api/verify/tier2', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ session_token: sessionToken, detected_country: country })
+            });
+            const data = await res.json();
+            alertBox.textContent = data.message;
+            alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+
+            if (data.success) {
+              document.getElementById('badgeStep2').className = "step-item completed";
+              document.getElementById('badgeStep3').className = "step-item active";
+              document.getElementById('tier3Section').style.display = 'block';
+            }
+          } catch (err) {
+            alertBox.textContent = "Geocoding network error. Please retry or use dev simulation.";
+            alertBox.className = 'feedback-msg show error';
+          }
+        },
+        (error) => {
+          geoStatus.textContent = "Location permission denied.";
+          alertBox.textContent = "ECI Security Policy requires GPS permission to verify overseas jurisdiction.";
+          alertBox.className = 'feedback-msg show error';
+        },
+        { timeout: 10000, enableHighAccuracy: true }
+      );
+    }
+
+    // TIER 3: OTP
+    async function requestOtp() {
+      const res = await fetch('/api/verify/tier3/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_token: sessionToken })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('otpDispArea').textContent = `Passcode sent: ${data.simulated_otp}`;
+        document.getElementById('t3Otp').value = data.simulated_otp;
+      }
+    }
+
+    async function submitTier3() {
+      const otp = document.getElementById('t3Otp').value;
+      const alertBox = document.getElementById('t3Alert');
+
+      const res = await fetch('/api/verify/tier3/confirm-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_token: sessionToken, otp: otp })
+      });
+      const data = await res.json();
+      alertBox.textContent = data.message;
+      alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+
+      if (data.success) {
+        document.getElementById('badgeStep3').className = "step-item completed";
+        document.getElementById('badgeStep4').className = "step-item active";
+        document.getElementById('tier4Section').style.display = 'block';
+      }
+    }
+
+    // TIER 4: CAMERA & STRICT FACIAL LIVENESS
+    async function startCamera() {
+      const video = document.getElementById('webcam');
+      const feedback = document.getElementById('biometricFeedback');
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
+        video.srcObject = cameraStream;
+        feedback.textContent = "Camera active. Center your full face inside the outline.";
+      } catch (err) {
+        feedback.textContent = "Unable to access camera hardware.";
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+        document.getElementById('webcam').srcObject = null;
+        document.getElementById('biometricFeedback').textContent = "Camera hardware powered off.";
+      }
+    }
+
+    async function analyzeFaceLiveness() {
+      const alertBox = document.getElementById('t4Alert');
+      const feedback = document.getElementById('biometricFeedback');
+      const video = document.getElementById('webcam');
+      const guide = document.getElementById('faceGuide');
+
+      if (!cameraStream) {
+        alertBox.textContent = "Please activate camera first.";
+        alertBox.className = 'feedback-msg show error';
+        return;
+      }
+
+      const canvas = document.getElementById('hiddenCanvas');
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, 320, 240);
+      const imgData = ctx.getImageData(0, 0, 320, 240);
+      const data = imgData.data;
+
+      // 1. Brightness Check
+      let totalBrightness = 0;
+      for (let i = 0; i < data.length; i += 4) {
+        totalBrightness += (data[i] + data[i+1] + data[i+2]) / 3;
+      }
+      const avgBrightness = totalBrightness / (data.length / 4);
+
+      if (avgBrightness < 45 || avgBrightness > 220) {
+        feedback.textContent = "Lighting insufficient or camera obscured.";
+        alertBox.textContent = "Liveness failed: Ensure good illumination and uncover camera lens.";
+        alertBox.className = 'feedback-msg show error';
+        return;
+      }
+
+      // 2. Center Face Variance Check (Rejects covered lens / flat surface)
+      let centerVariance = 0;
+      let centerPixelCount = 0;
+      for (let y = 60; y < 180; y++) {
+        for (let x = 100; x < 220; x++) {
+          const idx = (y * 320 + x) * 4;
+          const pixelVal = (data[idx] + data[idx+1] + data[idx+2]) / 3;
+          centerVariance += Math.abs(pixelVal - avgBrightness);
+          centerPixelCount++;
+        }
+      }
+      const avgVariance = centerVariance / centerPixelCount;
+
+      // Real human face has distinct features (eyes, nose, shadows) yielding variance > 12
+      let livenessPassed = false;
+      if (window.FaceDetector) {
+        try {
+          const detector = new FaceDetector({ fastMode: true, maxDetectedFaces: 1 });
+          const faces = await detector.detect(video);
+          if (faces.length === 1 && avgVariance > 12) {
+            livenessPassed = true;
+          }
+        } catch (e) {
+          livenessPassed = (avgVariance > 14);
+        }
+      } else {
+        livenessPassed = (avgVariance > 14);
+      }
+
+      if (!livenessPassed) {
+        guide.className = "face-guideline";
+        feedback.textContent = "Facial bounds unverified. Full face must be uncovered.";
+        alertBox.textContent = "Biometric rejected: Obstruction detected (hands/mask/turn). Keep face fully visible.";
+        alertBox.className = 'feedback-msg show error';
+        return;
+      }
+
+      guide.className = "face-guideline aligned";
+      feedback.textContent = "Full face verified. Shutting down camera...";
+
+      // Crucial: Stop camera immediately upon verification
+      stopCamera();
+
+      const res = await fetch('/api/verify/tier4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ session_token: sessionToken, liveness_passed: true })
+      });
+      const resData = await res.json();
+      alertBox.textContent = resData.message;
+      alertBox.className = resData.success ? 'feedback-msg show success' : 'feedback-msg show error';
+
+      if (resData.success) {
+        blindToken = resData.blind_token; // Decoupled token
+        document.getElementById('badgeStep4').className = "step-item completed";
+        document.getElementById('badgeStep5').className = "step-item active";
+        document.getElementById('tier5Section').style.display = 'block';
+        loadCandidates();
+      }
+    }
+
+    // TIER 5: ANONYMOUS BLIND BALLOT
+    async function loadCandidates() {
+      const res = await fetch('/api/candidates');
+      const data = await res.json();
+      const list = document.getElementById('ballotList');
+      list.innerHTML = '';
+      
+      data.forEach(c => {
+        list.innerHTML += `
+          <label class="candidate-row">
+            <input type="radio" name="candidateOption" value="${c.id}">
+            <img src="${c.photo_url}" alt="${c.name}" class="candidate-photo">
+            <div class="candidate-info">
+              <h3>${c.name}</h3>
+              <p>${c.party}</p>
+            </div>
+            <span class="candidate-symbol">${c.symbol}</span>
+          </label>
+        `;
+      });
+    }
+
+    async function castFinalBallot() {
+      const selected = document.querySelector('input[name="candidateOption"]:checked');
+      const alertBox = document.getElementById('t5Alert');
+
+      if (!selected) {
+        alertBox.textContent = "Please select a candidate or NOTA.";
+        alertBox.className = 'feedback-msg show error';
+        return;
+      }
+
+      const res = await fetch('/api/cast-blind-ballot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ blind_token: blindToken, candidate_id: selected.value })
+      });
+      const data = await res.json();
+      alertBox.textContent = data.message;
+      alertBox.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+
+      if (data.success) {
+        document.getElementById('badgeStep5').className = "step-item completed";
+        document.getElementById('ballotList').style.display = 'none';
+        document.querySelector('.gov-btn-success').style.display = 'none';
+        document.getElementById('receiptCode').textContent = data.receipt_id;
+        document.getElementById('receiptContainer').style.display = 'block';
+      }
+    }
+
+    function downloadVVPAT() {
+      const element = document.getElementById('vvpatSlip');
+      html2pdf().from(element).save('ECI_Official_VVPAT_Receipt.pdf');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+:root {
+  --gov-orange: #FF9933;
+  --gov-white: #FFFFFF;
+  --gov-green: #138808;
+  --gov-navy: #0b3954;
+  --gov-blue-dark: #002b49;
+  --gov-blue-primary: #0056b3;
+  --gov-border: #d0d7de;
+  --gov-bg: #f4f6f9;
+  --gov-text: #1e293b;
+  --gov-muted: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--gov-bg);
+  color: var(--gov-text);
+  line-height: 1.5;
+}
+
+/* National Tiranga Strip */
+.tiranga-bar {
+  height: 5px;
+  background: linear-gradient(to right, var(--gov-orange) 33%, #fff 33%, #fff 66%, var(--gov-green) 66%);
+}
+
+/* Top Utility Header */
+.top-nav {
+  background-color: var(--gov-blue-dark);
+  color: #e2e8f0;
+  font-size: 0.8rem;
+  padding: 6px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.top-nav a {
+  color: #f8fafc;
+  text-decoration: none;
+  margin-left: 15px;
+}
+
+/* Language Selector Dropdown */
+#langSelect {
+  background: #0f172a;
+  color: #ffffff;
+  border: 1px solid #334155;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+/* Main Portal Branding Header */
+.main-header {
+  background-color: #ffffff;
+  border-bottom: 2px solid var(--gov-orange);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.emblem-badge {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.brand-titles h1 {
+  font-size: 1.35rem;
+  color: var(--gov-blue-dark);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.brand-titles p {
+  font-size: 0.85rem;
+  color: var(--gov-muted);
+  font-weight: 500;
+}
+
+.helpline-box {
+  background: #f8fafc;
+  border: 1px solid var(--gov-border);
+  border-left: 4px solid var(--gov-orange);
+  padding: 8px 15px;
+  text-align: right;
+  border-radius: 4px;
+}
+
+.helpline-box span {
+  display: block;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #475569;
+}
+
+.helpline-box strong {
+  font-size: 1.1rem;
+  color: #b91c1c;
+}
+
+/* Page Layout */
+.container {
+  max-width: 1040px;
+  margin: 25px auto;
+  padding: 0 15px;
+}
+
+.notice-ticker {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  color: #856404;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+}
+
+/* Stepper Progress Bar */
+.stepper-nav {
+  display: flex;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid var(--gov-border);
+  border-radius: 4px;
+  padding: 10px 20px;
+  margin-bottom: 25px;
+}
+
+.step-item {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.step-item.active {
+  color: var(--gov-blue-primary);
+}
+
+.step-item.completed {
+  color: var(--gov-green);
+}
+
+.step-badge {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+/* Cards & Panels */
+.gov-card {
+  background: #ffffff;
+  border: 1px solid var(--gov-border);
+  border-top: 3px solid var(--gov-blue-primary);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+
+.gov-card-header {
+  background: #fafbfc;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--gov-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gov-card-header h2 {
+  font-size: 1.05rem;
+  color: var(--gov-blue-dark);
+}
+
+.gov-card-body {
+  padding: 20px;
+}
+
+/* Form Controls */
+.form-field {
+  margin-bottom: 14px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #334155;
+}
+
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background-color: #ffffff;
+}
+
+.form-field input:focus,
+.form-field select:focus {
+  outline: none;
+  border-color: var(--gov-blue-primary);
+  box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.15);
+}
+
+/* Action Buttons */
+.gov-btn {
+  background-color: var(--gov-blue-primary);
+  color: #ffffff;
+  border: none;
+  padding: 9px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out;
+}
+
+.gov-btn:hover {
+  background-color: var(--gov-blue-dark);
+}
+
+.gov-btn-success {
+  background-color: var(--gov-green);
+  color: #ffffff;
+  width: 100%;
+  margin-top: 15px;
+  padding: 12px;
+  font-size: 1rem;
+}
+
+.gov-btn-success:hover {
+  background-color: #0e6306;
+}
+
+/* Biometric Scanner Viewport & HUD Overlay */
+.scanner-viewport {
+  width: 320px;
+  height: 240px;
+  background: #0f172a;
+  border-radius: 8px;
+  margin: 15px auto;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid var(--gov-blue-primary);
+}
+
+.scanner-viewport video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.face-guideline {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 180px;
+  border: 2px dashed #38bdf8;
+  border-radius: 50%;
+  pointer-events: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.face-guideline.aligned {
+  border-color: #22c55e;
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+}
+
+/* Candidate Electronic Ballot Layout */
+.ballot-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.candidate-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid var(--gov-border);
+  padding: 12px 16px;
+  border-radius: 6px;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.candidate-row:hover {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+}
+
+.candidate-photo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e2e8f0;
+}
+
+.candidate-info {
+  flex: 1;
+}
+
+.candidate-info h3 {
+  font-size: 1rem;
+  color: var(--gov-blue-dark);
+}
+
+.candidate-info p {
+  font-size: 0.85rem;
+  color: var(--gov-muted);
+}
+
+.candidate-symbol {
+  background: #e2e8f0;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+/* VVPAT Confirmation Slip & Printable Layout */
+.vvpat-receipt {
+  background: #ffffff;
+  border: 2px dashed #059669;
+  border-radius: 6px;
+  padding: 24px;
+  color: var(--gov-text);
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.vvpat-receipt h3 {
+  color: #065f46;
+  margin-bottom: 6px;
+  font-size: 1.1rem;
+}
+
+.vvpat-receipt .code {
+  font-family: monospace;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #047857;
+}
+
+/* Administrative Tables */
+.gov-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.gov-table th {
+  background-color: #f8fafc;
+  color: #334155;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--gov-border);
+}
+
+.gov-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--gov-border);
+}
+
+/* System Feedback Banners */
+.feedback-msg {
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border-radius: 4px;
+  display: none;
+}
+
+.feedback-msg.show {
+  display: block;
+}
+
+.feedback-msg.success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.feedback-msg.error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+/* Footer */
+footer {
+  background-color: var(--gov-blue-dark);
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  padding: 25px 20px;
+  margin-top: 40px;
+  border-top: 3px solid var(--gov-green);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .main-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .helpline-box {
+    text-align: left;
+  }
+}

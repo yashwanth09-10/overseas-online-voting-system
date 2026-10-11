@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECI Overseas E-Voting Admin Portal</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="tiranga-bar"></div>
+  <header class="main-header">
+    <div class="brand-wrapper">
+      <div class="emblem-badge">🏛️</div>
+      <div class="brand-titles">
+        <h1>ECI Official Returning Officer Dashboard</h1>
+        <p>Overseas Digital Ballot Management & Cryptographic Audit Vault</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="gov-card">
+      <div class="gov-card-header"><h2>Election Lifecycle Control</h2></div>
+      <div class="gov-card-body">
+        <p>Current Status: <strong id="currentStatusText" style="color: #0284c7;">LOADING...</strong></p>
+        <div class="form-field" style="margin-top: 15px;">
+          <label>Election Commissioner Passkey:</label>
+          <input type="password" id="adminKey" value="ECI_ADMIN_2026">
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="gov-btn" onclick="updateStatus('VOTING_ACTIVE')">Open Polling (Active)</button>
+          <button class="gov-btn" style="background: #b45309;" onclick="updateStatus('VOTING_CLOSED')">Close Polling (Seal EVM)</button>
+          <button class="gov-btn" style="background: #15803d;" onclick="updateStatus('RESULTS_DECLARED')">Declare Results (Decrypt Vault)</button>
+        </div>
+        <div id="adminMsg" class="feedback-msg"></div>
+      </div>
+    </div>
+
+    <div class="gov-card" id="resultsCard" style="display: none;">
+      <div class="gov-card-header"><h2>Official Decrypted Tally</h2></div>
+      <div class="gov-card-body">
+        <canvas id="resultsChart" style="max-height: 280px;"></canvas>
+      </div>
+    </div>
+
+    <div class="gov-card" id="auditCard" style="display: none;">
+      <div class="gov-card-header"><h2>Immutable Electoral Audit Trail</h2></div>
+      <div class="gov-card-body">
+        <table class="gov-table">
+          <thead><tr><th>Timestamp</th><th>Event</th><th>Description</th></tr></thead>
+          <tbody id="auditTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let myChart = null;
+
+    async function loadStatus() {
+      const res = await fetch('/api/admin/status');
+      const data = await res.json();
+      document.getElementById('currentStatusText').textContent = data.status;
+      if (data.status === 'RESULTS_DECLARED') {
+        fetchResults();
+      }
+    }
+
+    async function updateStatus(newStatus) {
+      const key = document.getElementById('adminKey').value;
+      const res = await fetch('/api/admin/set-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_key: key, new_status: newStatus })
+      });
+      const data = await res.json();
+      const msg = document.getElementById('adminMsg');
+      msg.textContent = data.success ? `Status changed to ${data.status}` : data.message;
+      msg.className = data.success ? 'feedback-msg show success' : 'feedback-msg show error';
+      loadStatus();
+    }
+
+    async function fetchResults() {
+      const key = document.getElementById('adminKey').value;
+      const res = await fetch('/api/admin/results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ admin_key: key })
+      });
+      const data = await res.json();
+      if (!data.success) return;
+
+      document.getElementById('resultsCard').style.display = 'block';
+      document.getElementById('auditCard').style.display = 'block';
+
+      const labels = data.results.map(c => c.name);
+      const counts = data.results.map(c => c.votes);
+
+      const ctx = document.getElementById('resultsChart').getContext('2d');
+      if (myChart) myChart.destroy();
+      myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{ label: 'Decrypted Votes', data: counts, backgroundColor: ['#FF9933', '#1e3a8a', '#0284c7', '#64748b'] }]
+        }
+      });
+
+      const auditBody = document.getElementById('auditTableBody');
+      auditBody.innerHTML = '';
+      data.logs.forEach(l => {
+        auditBody.innerHTML += `<tr><td>${l.timestamp}</td><td><strong>${l.type}</strong></td><td>${l.details}</td></tr>`;
+      });
+    }
+
+    loadStatus();
+  </script>
+</body>
+</html>
